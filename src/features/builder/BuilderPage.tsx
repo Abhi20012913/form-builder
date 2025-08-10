@@ -1,7 +1,6 @@
-import  { useState } from "react";
+import { useState } from "react";
 import {
   Box,
-  Grid,
   Typography,
   Button,
   List,
@@ -67,22 +66,37 @@ export default function BuilderPage() {
     };
     dispatch(saveForm(form));
     setSaveDialogOpen(false);
-    setSnackbarOpen(true); 
+    setSnackbarOpen(true);
   };
 
   return (
-    <Box sx={{ p: 3 }}>
-      <Typography variant="h4" gutterBottom fontWeight="bold">
+    <Box sx={{ p: { xs: 2, md: 4 }, maxWidth: 1200, mx: "auto" }}>
+      <Typography variant="h4" gutterBottom fontWeight={700} textAlign="center">
         Form Builder
       </Typography>
-      <Grid container spacing={3}>
-        <Grid item xs={12} md={4}>
-          <Card variant="outlined" sx={{ borderRadius: 2 }}>
+
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: { xs: "column", md: "row" },
+          gap: 4,
+          mt: 3,
+        }}
+      >
+
+        <Box
+          sx={{
+            flexBasis: { xs: "100%", md: "70%" },
+            maxWidth: { xs: "100%", md: "70%" },
+          }}
+        >
+          <Card elevation={3} sx={{ borderRadius: 3 }}>
             <CardContent>
-              <Typography variant="h6" gutterBottom>
-                Add Field
+              <Typography variant="h6" fontWeight={600} gutterBottom>
+                Add Fields
               </Typography>
-              <Stack direction="row" spacing={1} flexWrap="wrap">
+
+              <Stack direction="row" spacing={1} flexWrap="wrap" mb={3}>
                 {[
                   "text",
                   "number",
@@ -98,16 +112,19 @@ export default function BuilderPage() {
                     variant="outlined"
                     size="small"
                     onClick={() => onAdd(k)}
+                    aria-label={`Add ${k} field`}
                   >
                     {k}
                   </Button>
                 ))}
               </Stack>
 
-              <Divider sx={{ my: 2 }} />
-              <Typography variant="h6" gutterBottom>
+              <Divider sx={{ mb: 2 }} />
+
+              <Typography variant="h6" fontWeight={600} gutterBottom>
                 Fields
               </Typography>
+
               {fields.length === 0 ? (
                 <Typography
                   variant="body2"
@@ -117,7 +134,14 @@ export default function BuilderPage() {
                   No fields added yet. Use the buttons above to add fields.
                 </Typography>
               ) : (
-                <List dense>
+                <List
+                  dense
+                  sx={{
+                    maxHeight: 360,
+                    overflowY: "auto",
+                    borderRadius: 1,
+                  }}
+                >
                   {fields.map((f, idx) => (
                     <FieldListItem
                       key={f.id}
@@ -134,12 +158,18 @@ export default function BuilderPage() {
               )}
             </CardContent>
           </Card>
-        </Grid>
+        </Box>
 
-        <Grid item xs={12} md={8}>
-          <Card variant="outlined" sx={{ borderRadius: 2 }}>
+
+        <Box
+          sx={{
+            flexBasis: { xs: "100%", md: "30%" },
+            maxWidth: { xs: "100%", md: "30%" },
+          }}
+        >
+          <Card elevation={3} sx={{ borderRadius: 3 }}>
             <CardContent>
-              <Typography variant="h6" gutterBottom>
+              <Typography variant="h6" fontWeight={600} gutterBottom>
                 Form Metadata
               </Typography>
               <TextField
@@ -147,22 +177,25 @@ export default function BuilderPage() {
                 value={name}
                 onChange={(e) => dispatch(setFormName(e.target.value))}
                 fullWidth
-                sx={{ mb: 2 }}
+                sx={{ mb: 3 }}
+                autoFocus
               />
-              <Button
-                variant="contained"
-                size="large"
-                onClick={() => {
-                  setSaveDialogOpen(true);
-                  setSaveName(name);
-                }}
-              >
-                Save Form
-              </Button>
+              <Box textAlign="right">
+                <Button
+                  variant="contained"
+                  size="large"
+                  onClick={() => {
+                    setSaveDialogOpen(true);
+                    setSaveName(name);
+                  }}
+                >
+                  Save Form
+                </Button>
+              </Box>
             </CardContent>
           </Card>
-        </Grid>
-      </Grid>
+        </Box>
+      </Box>
 
       <Dialog
         open={editorOpen}
@@ -181,7 +214,6 @@ export default function BuilderPage() {
         </DialogContent>
       </Dialog>
 
-
       <Dialog
         open={saveDialogOpen}
         onClose={() => setSaveDialogOpen(false)}
@@ -195,6 +227,7 @@ export default function BuilderPage() {
             value={saveName}
             onChange={(e) => setSaveName(e.target.value)}
             fullWidth
+            autoFocus
           />
         </DialogContent>
         <DialogActions>
@@ -205,7 +238,6 @@ export default function BuilderPage() {
         </DialogActions>
       </Dialog>
 
-   
       <Snackbar
         open={snackbarOpen}
         autoHideDuration={3000}

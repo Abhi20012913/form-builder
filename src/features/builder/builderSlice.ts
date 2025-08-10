@@ -32,18 +32,22 @@ const builderSlice = createSlice({
     addField: (state, action: PayloadAction<{ kind: FieldSchema["kind"] }>) => {
       const kind = action.payload.kind;
       const id = makeId();
+
       if (kind === "derived") {
         const df: DerivedField = {
           id,
           kind: "derived",
           label: "Derived Field",
+          required: false,
           parentIds: [],
+          formula: "",
+          builtIn: undefined,
         };
         state.fields.push(df);
       } else {
         const bf: BaseField = {
           id,
-          kind: kind as any,
+          kind: kind,
           label: `${kind} field`,
           required: false,
           defaultValue: kind === "checkbox" ? [] : "",
@@ -55,7 +59,9 @@ const builderSlice = createSlice({
     },
     updateField: (state, action: PayloadAction<FieldSchema>) => {
       const idx = state.fields.findIndex((f) => f.id === action.payload.id);
-      if (idx >= 0) state.fields[idx] = action.payload;
+      if (idx >= 0) {
+        state.fields[idx] = action.payload;
+      }
     },
     removeField: (state, action: PayloadAction<string>) => {
       state.fields = state.fields.filter((f) => f.id !== action.payload);

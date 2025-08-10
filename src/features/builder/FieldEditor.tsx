@@ -1,21 +1,20 @@
 import React, { useEffect, useState } from "react";
 import {
   Box,
-  TextField,
-  Switch,
   FormControlLabel,
-  Button,
+  Switch,
+  MenuItem, 
   Typography,
+  Button,
   Stack,
   Chip,
-  IconButton,
-  MenuItem,
+  TextField,
   Divider,
   Paper,
+  IconButton,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-import { type FieldSchema, type BaseField, type DerivedField } from "../../types/types";
-
+import type { FieldSchema, BaseField, DerivedField } from "../../types/types";
 
 function makeId() {
   return Math.random().toString(36).substr(2, 9);
@@ -46,7 +45,8 @@ export default function FieldEditor({ field, allFields, onSave, onCancel }: Prop
     if (field) setLocal(field);
   }, [field]);
 
-  const update = (patch: Partial<FieldSchema>) => setLocal((l) => ({ ...(l as any), ...(patch as any) }));
+  const update = (patch: Partial<FieldSchema>) =>
+    setLocal((l) => ({ ...(l as any), ...(patch as any) }));
   const asBase = (l: FieldSchema) => l as BaseField;
   const asDerived = (l: FieldSchema) => l as DerivedField;
 
@@ -69,7 +69,7 @@ export default function FieldEditor({ field, allFields, onSave, onCancel }: Prop
               control={
                 <Switch
                   checked={Boolean(asBase(local).required)}
-                  onChange={(e) => update({ required: e.target.checked } as any)}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => update({ required: e.target.checked } as any)}
                 />
               }
               label="Required"
@@ -87,6 +87,7 @@ export default function FieldEditor({ field, allFields, onSave, onCancel }: Prop
               onChange={(e) => {
                 const v = { ...(asBase(local).validations ?? {}) };
                 if (e.target.value === "email") v.email = true;
+                else delete v.email;
                 update({ validations: v } as any);
               }}
               helperText="Pick a sample validation (you can add more programmatically)"
@@ -98,7 +99,10 @@ export default function FieldEditor({ field, allFields, onSave, onCancel }: Prop
           </>
         )}
 
-        {(!isDerived && (local.kind === "select" || local.kind === "radio" || local.kind === "checkbox")) && (
+        {(!isDerived &&
+          (local.kind === "select" ||
+            local.kind === "radio" ||
+            local.kind === "checkbox")) && (
           <Box>
             <Typography variant="subtitle2" gutterBottom>
               Options
@@ -135,7 +139,9 @@ export default function FieldEditor({ field, allFields, onSave, onCancel }: Prop
               select
               label="Built-in (optional)"
               value={asDerived(local).builtIn ?? ""}
-              onChange={(e) => update({ builtIn: e.target.value || undefined } as any)}
+              onChange={(e) =>
+                update({ builtIn: e.target.value || undefined } as any)
+              }
               fullWidth
             >
               <MenuItem value="">None</MenuItem>
@@ -147,7 +153,12 @@ export default function FieldEditor({ field, allFields, onSave, onCancel }: Prop
               label="Parent fields (comma separated IDs)"
               value={(asDerived(local).parentIds ?? []).join(",")}
               onChange={(e) =>
-                update({ parentIds: e.target.value.split(",").map((s) => s.trim()).filter(Boolean) } as any)
+                update({
+                  parentIds: e.target.value
+                    .split(",")
+                    .map((s) => s.trim())
+                    .filter(Boolean),
+                } as any)
               }
               helperText="You can also pick from below"
               fullWidth

@@ -24,10 +24,9 @@ interface Props {
   error?: string | null;
 }
 
-
 const StyledDatePicker = styled(DatePicker)(({ theme }) => ({
   "& .MuiPaper-root": {
-    backgroundColor: "#1e1e1e", 
+    backgroundColor: "#1e1e1e",
     color: "#fff",
   },
   "& .MuiPickersDay-root": {
@@ -50,7 +49,7 @@ export default function FieldRenderer({
       <TextField
         label={field.label}
         type={field.kind === "number" ? "number" : "text"}
-        value={value ?? field.defaultValue ?? ""}
+        value={value ?? ("defaultValue" in field ? field.defaultValue : "") ?? ""}
         onChange={(e) => onChange(field.id, e.target.value)}
         fullWidth
         disabled={readOnly}
@@ -86,7 +85,7 @@ export default function FieldRenderer({
         label={field.label}
         multiline
         rows={4}
-        value={value ?? field.defaultValue ?? ""}
+        value={value ?? ("defaultValue" in field ? field.defaultValue : "") ?? ""}
         onChange={(e) => onChange(field.id, e.target.value)}
         fullWidth
         disabled={readOnly}
@@ -101,12 +100,12 @@ export default function FieldRenderer({
       <FormControl fullWidth>
         <InputLabel>{field.label}</InputLabel>
         <Select
-          value={value ?? field.defaultValue ?? ""}
+          value={value ?? ("defaultValue" in field ? field.defaultValue : "") ?? ""}
           label={field.label}
           onChange={(e) => onChange(field.id, e.target.value)}
           disabled={readOnly}
         >
-          {(field as any).options?.map((opt: string) => (
+          {(field.options ?? []).map((opt) => (
             <MenuItem value={opt} key={opt}>
               {opt}
             </MenuItem>
@@ -120,10 +119,10 @@ export default function FieldRenderer({
     return (
       <FormControl>
         <RadioGroup
-          value={value ?? field.defaultValue ?? ""}
+          value={value ?? ("defaultValue" in field ? field.defaultValue : "") ?? ""}
           onChange={(e) => onChange(field.id, e.target.value)}
         >
-          {(field as any).options?.map((opt: string) => (
+          {(field.options ?? []).map((opt) => (
             <FormControlLabel
               key={opt}
               value={opt}
@@ -138,7 +137,7 @@ export default function FieldRenderer({
   }
 
   if (field.kind === "checkbox") {
-    const options = (field as any).options ?? ["Option 1"];
+    const options = field.options ?? ["Option 1"];
     const arr = Array.isArray(value) ? value : field.defaultValue ?? [];
     const toggle = (opt: string) => {
       const set = new Set(arr);
@@ -148,7 +147,7 @@ export default function FieldRenderer({
     };
     return (
       <FormGroup>
-        {options.map((opt: string) => (
+        {options.map((opt) => (
           <FormControlLabel
             key={opt}
             control={
@@ -168,7 +167,7 @@ export default function FieldRenderer({
     return (
       <TextField
         label={field.label}
-        value={value ?? field.defaultValue ?? ""}
+        value={value ?? ("defaultValue" in field ? field.defaultValue : "") ?? ""}
         fullWidth
         InputProps={{ readOnly: true }}
       />
